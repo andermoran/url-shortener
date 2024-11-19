@@ -17,22 +17,25 @@ const allowedOrigins = [
 // Configure CORS dynamically
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin
+    // Allow requests with no origin (like Postman or server-to-server)
     if (!origin) return callback(null, true);
 
     if (allowedOrigins.includes(origin)) {
-      callback(null, true);
+      callback(null, true); // Origin is allowed
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error('Not allowed by CORS')); // Origin is not allowed
     }
   },
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  methods: ['GET', 'POST', 'OPTIONS'], // Allowed HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+  credentials: true // Allow cookies or credentials
 };
 
 // Apply CORS middleware
 app.use(cors(corsOptions));
+
+// Handle preflight requests globally
+app.options('*', cors(corsOptions));
 
 // Middleware to parse JSON bodies
 app.use(express.json());
