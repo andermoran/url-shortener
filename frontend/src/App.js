@@ -1,11 +1,29 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000';
+
 function App() {
   const [originalUrl, setOriginalUrl] = useState('');
   const [shortUrl, setShortUrl] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Validate and normalize the URL
+  const validateAndNormalizeUrl = (url) => {
+    // Regex for basic URL validation
+    const urlPattern = /^(https?:\/\/)?([\w.-]+)+(\.[a-z]{2,})(\/\S*)?$/i;
+    if (!urlPattern.test(url)) {
+      throw new Error('Please enter a valid URL (e.g., example.com, www.example.com)');
+    }
+
+    // Normalize the URL: Add "http://" if missing
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = `http://${url}`;
+    }
+
+    return url;
+  };
 
   // Handle URL shortening
   const handleSubmit = async (e) => {
@@ -15,11 +33,14 @@ function App() {
     setLoading(true);
 
     try {
+      // Validate and normalize the URL
+      const normalizedUrl = validateAndNormalizeUrl(originalUrl);
+
       // Make POST request to the backend API
-      const response = await axios.post('http://localhost:3000/api/shorten', { originalUrl });
+      const response = await axios.post(`${BACKEND_URL}/api/shorten`, { originalUrl: normalizedUrl });
       setShortUrl(response.data.shortUrl); // Set the shortened URL
     } catch (err) {
-      setError(err.response?.data?.error || 'An error occurred. Please try again.');
+      setError(err.response?.data?.error || err.message || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -30,8 +51,8 @@ function App() {
       <h1>URL Shortener</h1>
       <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
         <input
-          type="url"
-          placeholder="Enter a URL to shorten"
+          type="text" // Use "text" for more flexible validation
+          placeholder="Enter a URL to shorten (e.g., example.com)"
           value={originalUrl}
           onChange={(e) => setOriginalUrl(e.target.value)}
           required
@@ -69,3 +90,4 @@ function App() {
 }
 
 export default App;
+  
