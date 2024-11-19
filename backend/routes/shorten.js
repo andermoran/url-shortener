@@ -1,3 +1,8 @@
+const express = require('express');
+const router = express.Router(); // Create a new router instance
+const connectToDb = require('../db'); // Adjust the path if necessary
+
+
 router.post('/', async (req, res) => {
   const { originalUrl } = req.body;
 
@@ -41,3 +46,6 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+module.exports = router; // Export the router

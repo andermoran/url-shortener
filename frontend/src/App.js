@@ -16,7 +16,7 @@ function App() {
 
     try {
       // Make POST request to the backend API
-      const response = await axios.post('https://url-shortener-n50vb7wln-andermorans-projects.vercel.app/api/shorten', { originalUrl });
+      const response = await axios.post('https://url-shortener-ecru-seven.vercel.app/api/shorten', { originalUrl });
       setShortUrl(response.data.shortUrl); // Set the shortened URL
     } catch (err) {
       setError(err.response?.data?.error || 'An error occurred. Please try again.');

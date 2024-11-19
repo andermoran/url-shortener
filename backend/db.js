@@ -7,7 +7,6 @@ const client = new MongoClient(uri);
 let db;
 
 async function connectToDb() {
-  console.log('MONGODB_URI:', process.env.MONGODB_URI);
   if (!db) {
     await client.connect();
     db = client.db('Cluster0-url-shortener');
